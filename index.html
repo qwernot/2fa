@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2FA 二步验证工具 - 在线获取动态验证码 | 2fa.cash</title>
+  <meta name="description" content="2fa.cash 风格在线 2FA 二步验证工具，支持登录账号云端同步保存、免登录快捷取码、批量取码、二维码解析与多账号安全管理。" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22currentColor%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z%22/><circle cx=%2216.5%22 cy=%227.5%22 r=%22.5%22 fill=%22currentColor%22/></svg>">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="header-container">
+      <a href="#" class="brand-logo" id="brandLink">
+        <div class="brand-logo-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"></path>
+            <circle cx="16.5" cy="7.5" r=".5" fill="currentColor"></circle>
+          </svg>
+        </div>
+        <span>2fa<span class="brand-muted">.cash</span></span>
+      </a>
+
+      <div class="nav-tabs">
+        <button class="nav-btn active" id="tabQuickBtn" data-target="quick">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+          </svg>
+          <span>快捷取码</span>
+        </button>
+
+        <button class="nav-btn" id="tabBatchBtn" data-target="batch">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="18" height="18" x="3" y="3" rx="2"></rect>
+            <path d="M3 9h18"></path>
+            <path d="M3 15h18"></path>
+            <path d="M9 3v18"></path>
+          </svg>
+          <span>批量取码</span>
+        </button>
+
+        <button class="nav-btn" id="tabMy2faBtn" data-target="my2fa">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="16" r="1"></circle>
+            <rect x="3" y="10" width="18" height="12" rx="2"></rect>
+            <path d="M7 10V7a5 5 0 0 1 10 0v3"></path>
+          </svg>
+          <span>我的 2FA</span>
+        </button>
+
+        <!-- 用户登录状态栏 -->
+        <div id="userNavArea" style="display: flex; align-items: center; gap: 0.5rem;">
+          <!-- 未登录状态 -->
+          <button class="btn btn-outline btn-sm" id="headerLoginBtn" type="button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+              <polyline points="10 17 15 12 10 7"></polyline>
+              <line x1="15" y1="12" x2="3" y2="12"></line>
+            </svg>
+            <span>登录 / 注册</span>
+          </button>
+
+          <!-- 已登录状态 -->
+          <div id="loggedInGroup" style="display: none; align-items: center; gap: 0.5rem;">
+            <div class="user-badge" id="userBadge" title="当前登录用户">
+              <span class="user-avatar-tiny" id="userAvatarChar">U</span>
+              <span class="user-name-text" id="headerUsername">User</span>
+            </div>
+            <button class="btn btn-outline btn-sm" id="logoutBtn" type="button" title="退出登录">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+              </svg>
+              <span>退出</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 主题切换 -->
+        <button class="theme-btn" id="themeToggleBtn" title="切换深色/浅色模式">
+          <svg id="themeIcon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="4"></circle>
+            <path d="M12 2v2"></path>
+            <path d="M12 20v2"></path>
+            <path d="m4.93 4.93 1.41 1.41"></path>
+            <path d="m17.66 17.66 1.41 1.41"></path>
+            <path d="M2 12h2"></path>
+            <path d="M20 12h2"></path>
+            <path d="m6.34 17.66-1.41 1.41"></path>
+            <path d="m19.07 4.93-1.41 1.41"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main>
+    <!-- TAB 1: 快捷取码 (Quick 2FA) -->
+    <section id="sectionQuick" class="tab-section">
+      <div class="hero-section">
+        <div class="hero-deco" aria-hidden="true">
+          <div class="orbit-circle-1"></div>
+          <div class="orbit-circle-2"></div>
+          <div class="orbit-circle-3"></div>
+          <svg class="orbit-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"></path>
+            <circle cx="16.5" cy="7.5" r=".5" fill="currentColor"></circle>
+          </svg>
+        </div>
+
+        <div class="hero-badge">
+          <span class="hero-badge-dot"></span>
+          <span>免登录 · 临时即开即用取码</span>
+        </div>
+        <h1 class="hero-title">2FA 二步验证工具</h1>
+        <p class="hero-desc">无需注册即可快速取码；如需保存账号，点击右上角登录即可永久同步。</p>
+
+        <div class="hero-steps">
+          <div class="step-item">
+            <span class="step-num">01</span>
+            <span>输入密钥</span>
+            <span class="step-arrow">→</span>
+          </div>
+          <div class="step-item">
+            <span class="step-num">02</span>
+            <span>获取验证码</span>
+            <span class="step-arrow">→</span>
+          </div>
+          <div class="step-item">
+            <span class="step-num">03</span>
+            <span>一键复制</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="main-grid">
+        <!-- Left: Input Card -->
+        <div class="ui-card">
+          <div class="card-header-bar">
+            <label class="card-title" for="secretInput">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+              <span>2FA 密钥或验证链接</span>
+            </label>
+            <span class="card-step-badge">01 / 输入</span>
+          </div>
+
+          <div class="secret-textarea-wrapper" id="dropArea">
+            <textarea
+              id="secretInput"
+              class="secret-textarea"
+              placeholder="输入密钥（例如: JBSWY3DPEHPK3PXP）或粘贴 otpauth:// 链接&#10;支持直接拖拽二维码图片或 Ctrl+V 粘贴截图二维码"
+              spellcheck="false"
+              autocomplete="off"
+            ></textarea>
+            <div class="dropzone-overlay">
+              <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+              <span>松开鼠标以解析二维码</span>
+            </div>
+          </div>
+
+          <div class="textarea-hint">
+            <span>支持 Google Authenticator 等标准 RFC 6238 验证码</span>
+            <button class="btn btn-outline btn-sm" id="pasteBtn" type="button" title="从剪贴板读取">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="8" height="4" x="8" y="2" rx="1" ry="1"></rect>
+                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+              </svg>
+              <span>粘贴</span>
+            </button>
+          </div>
+
+          <div class="btn-group">
+            <button class="btn btn-primary" id="getCodeBtn" type="button">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"></path>
+                <circle cx="16.5" cy="7.5" r=".5" fill="currentColor"></circle>
+              </svg>
+              <span>获取验证码</span>
+              <svg style="margin-left: auto;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </button>
+            <button class="btn btn-outline" id="clearBtn" type="button">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+              <span>清空</span>
+            </button>
+          </div>
+
+          <div class="btn-action-row">
+            <div class="action-row-left">
+              <input type="file" id="qrFileInput" accept="image/*" style="display: none;" />
+              <button class="btn btn-outline btn-sm" id="uploadQrBtn" type="button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                <span>导入二维码</span>
+              </button>
+            </div>
+            <span style="font-size: 0.78rem; color: var(--text-muted);">
+              💡 提示：按 Ctrl+V 可直接粘贴二维码截图
+            </span>
+          </div>
+        </div>
+
+        <!-- Right: Code Result Card -->
+        <div class="ui-card result-card">
+          <!-- Idle State -->
+          <div class="idle-container" id="idleBox">
+            <div class="idle-icon-wrap">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"></path>
+                <circle cx="16.5" cy="7.5" r=".5" fill="currentColor"></circle>
+              </svg>
+            </div>
+            <div class="idle-title">你的验证码将在这里显示</div>
+            <div class="dots-placeholder">
+              <div class="dot-box"><span class="idle-dot" style="animation-delay: 0s;">·</span></div>
+              <div class="dot-box"><span class="idle-dot" style="animation-delay: 0.2s;">·</span></div>
+              <div class="dot-box"><span class="idle-dot" style="animation-delay: 0.4s;">·</span></div>
+              <div class="dot-box"><span class="idle-dot" style="animation-delay: 0.6s;">·</span></div>
+              <div class="dot-box"><span class="idle-dot" style="animation-delay: 0.8s;">·</span></div>
+              <div class="dot-box"><span class="idle-dot" style="animation-delay: 1.0s;">·</span></div>
+            </div>
+            <p class="idle-desc">输入密钥，点击「获取验证码」<br />生成后可一键复制，到期自动更新</p>
+          </div>
+
+          <!-- Active State -->
+          <div class="active-container" id="activeBox">
+            <div class="account-tag" id="accTag">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              <span id="accLabelText">2FA 验证码</span>
+            </div>
+
+            <div class="code-display-wrap" id="codeDisplayWrap" title="点击一键复制">
+              <div class="code-number" id="codeNumber">000 000</div>
+              <div class="copy-hint-badge">点击复制验证码</div>
+            </div>
+
+            <!-- Circular Progress & Countdown -->
+            <div class="countdown-box">
+              <svg class="progress-ring" width="36" height="36">
+                <circle class="progress-ring-circle-bg" stroke-width="3" fill="transparent" r="14" cx="18" cy="18" />
+                <circle id="countdownCircle" class="progress-ring-circle" stroke-width="3" stroke-linecap="round" fill="transparent" r="14" cx="18" cy="18" stroke-dasharray="87.96" stroke-dashoffset="0" />
+              </svg>
+              <span class="countdown-text" id="countdownText">30s</span>
+            </div>
+
+            <div style="width: 100%; display: flex; gap: 0.6rem; margin-top: 0.5rem;">
+              <button class="btn btn-primary" id="copyCodeBtn" type="button" style="flex: 1;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
+                  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+                </svg>
+                <span id="copyBtnText">复制验证码</span>
+              </button>
+              <button class="btn btn-outline" id="saveToMy2faQuickBtn" type="button" title="保存到我的 2FA">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Privacy Banner -->
+      <div class="privacy-banner">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path>
+          <path d="m9 12 2 2 4-4"></path>
+        </svg>
+        <span><strong>安全保障：</strong>临时取码与账号数据完全基于浏览器 Web Crypto API 本地离线运算，登录后数据安全绑定到您的个人账户。</span>
+      </div>
+    </section>
+
+    <!-- TAB 2: 批量取码 (Batch 2FA) -->
+    <section id="sectionBatch" class="tab-section batch-section">
+      <div class="hero-section" style="margin-bottom: 1.5rem;">
+        <div class="hero-badge">
+          <span class="hero-badge-dot"></span>
+          <span>高能效 · 多账号批量实时获取</span>
+        </div>
+        <h1 class="hero-title">批量 2FA 验证码</h1>
+        <p class="hero-desc">一行一个密钥或「账号 密钥」，支持一键刷新与批量复制，方便矩阵号与团队协作。</p>
+      </div>
+
+      <div class="ui-card">
+        <div class="card-header-bar">
+          <label class="card-title" for="batchInput">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="8" y1="6" x2="21" y2="6"></line>
+              <line x1="8" y1="12" x2="21" y2="12"></line>
+              <line x1="8" y1="18" x2="21" y2="18"></line>
+              <line x1="3" y1="6" x2="3.01" y2="6"></line>
+              <line x1="3" y1="12" x2="3.01" y2="12"></line>
+              <line x1="3" y1="18" x2="3.01" y2="18"></line>
+            </svg>
+            <span>批量输入（支持每行：纯密钥 或 名称: 密钥）</span>
+          </label>
+        </div>
+
+        <textarea
+          id="batchInput"
+          class="secret-textarea"
+          style="min-height: 120px;"
+          placeholder="示例：&#10;GitHub: JBSWY3DPEHPK3PXP&#10;Google: HXDMVGJ56XTRI8WB&#10;4S62JXOMO5P734D7"
+          spellcheck="false"
+        ></textarea>
+
+        <div style="display: flex; gap: 0.75rem; margin-top: 1rem; flex-wrap: wrap;">
+          <button class="btn btn-primary" id="generateBatchBtn" type="button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+            </svg>
+            <span>生成批量验证码</span>
+          </button>
+          <button class="btn btn-outline" id="copyAllBatchBtn" type="button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
+              <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+            </svg>
+            <span>一键复制全部最新码</span>
+          </button>
+          <button class="btn btn-outline" id="clearBatchBtn" type="button">
+            <span>清空</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Batch Results Grid -->
+      <div class="batch-card-grid" id="batchResultGrid"></div>
+    </section>
+
+    <!-- TAB 3: 我的 2FA (My 2FA) -->
+    <section id="sectionMy2fa" class="tab-section my2fa-section">
+      <!-- 未登录时的引导卡片 -->
+      <div id="unauthPromptCard" class="ui-card" style="text-align: center; padding: 3.5rem 1.5rem; margin-bottom: 2rem;">
+        <div style="width: 56px; height: 56px; border-radius: 16px; background-color: var(--secondary); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1.25rem;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="16" r="1"></circle>
+            <rect x="3" y="10" width="18" height="12" rx="2"></rect>
+            <path d="M7 10V7a5 5 0 0 1 10 0v3"></path>
+          </svg>
+        </div>
+        <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">登录我的 2FA 账号库</h2>
+        <p style="color: var(--text-muted); max-width: 480px; margin: 0 auto 1.5rem auto; font-size: 0.95rem;">
+          登录后，你的 2FA 密钥将安全同步保存到数据库中，无论更换设备、浏览器或电脑，都能随时登录同步取码！
+        </p>
+        <div style="display: flex; gap: 0.75rem; justify-content: center;">
+          <button class="btn btn-primary" id="promptLoginBtn" type="button">立即登录 / 注册</button>
+        </div>
+      </div>
+
+      <!-- 已登录内容区 -->
+      <div id="authAccountContent" style="display: none;">
+        <div class="hero-section" style="margin-bottom: 1.5rem;">
+          <div class="hero-badge">
+            <span class="hero-badge-dot"></span>
+            <span id="syncStatusBadge">已开启云端安全同步</span>
+          </div>
+          <h1 class="hero-title">我的 2FA 账号库</h1>
+          <p class="hero-desc">所有密钥均安全绑定在您的专属账户中，支持跨设备同步、实时动态取码与备份。</p>
+        </div>
+
+        <div class="my2fa-toolbar">
+          <div class="search-input-wrap">
+            <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" class="search-input" id="searchAccountInput" placeholder="搜索账号名称或服务..." />
+          </div>
+
+          <div class="my2fa-actions">
+            <button class="btn btn-primary btn-sm" id="openAddModalBtn" type="button">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              <span>添加账号</span>
+            </button>
+
+            <input type="file" id="importJsonFileInput" accept=".json" style="display: none;" />
+            <button class="btn btn-outline btn-sm" id="importJsonBtn" type="button">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              <span>导入备份</span>
+            </button>
+
+            <button class="btn btn-outline btn-sm" id="exportJsonBtn" type="button">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+              <span>导出备份</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Saved Accounts Grid -->
+        <div class="saved-account-grid" id="savedAccountsGrid">
+          <!-- Injected via JavaScript -->
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Login / Register Modal -->
+  <div class="modal-overlay" id="authModal">
+    <div class="modal-container" style="max-width: 420px;">
+      <div class="modal-header">
+        <h3 class="modal-title" id="authModalTitle">登录我的 2FA</h3>
+        <button class="icon-btn" id="closeAuthModalBtn" type="button">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Auth Tabs: 登录 / 注册 -->
+      <div class="auth-tabs" style="display: flex; border-bottom: 1px solid var(--border-color); margin-bottom: 1.25rem;">
+        <button class="auth-tab-btn active" id="authTabLogin" type="button" style="flex: 1; padding: 0.6rem; border: none; background: transparent; font-weight: 600; cursor: pointer; border-bottom: 2px solid var(--primary); color: var(--text-main);">登录</button>
+        <button class="auth-tab-btn" id="authTabRegister" type="button" style="flex: 1; padding: 0.6rem; border: none; background: transparent; font-weight: 500; cursor: pointer; color: var(--text-muted);">注册新账号</button>
+      </div>
+
+      <form id="authForm">
+        <div class="form-group">
+          <label class="form-label" for="authUsername">用户名 / 邮箱</label>
+          <input type="text" class="form-input" id="authUsername" placeholder="请输入用户名" required autocomplete="username" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="authPassword">密码 (至少 6 位)</label>
+          <input type="password" class="form-input" id="authPassword" placeholder="请输入密码" required autocomplete="current-password" />
+        </div>
+
+        <div id="authErrorMsg" style="color: var(--danger); font-size: 0.85rem; margin-bottom: 0.75rem; display: none;"></div>
+
+        <button type="submit" class="btn btn-primary" id="authSubmitBtn" style="width: 100%; margin-top: 0.5rem;">立即登录</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Add / Edit Account Modal -->
+  <div class="modal-overlay" id="accountModal">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modalTitle">添加 2FA 账号</h3>
+        <button class="icon-btn" id="closeModalBtn" type="button">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <form id="accountForm">
+        <input type="hidden" id="editAccountId" />
+
+        <div class="form-group">
+          <label class="form-label" for="accModalName">账号标识 / 备注名 *</label>
+          <input type="text" class="form-input" id="accModalName" placeholder="例如: GitHub (work@corp.com)" required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="accModalIssuer">服务提供商 (Issuer)</label>
+          <input type="text" class="form-input" id="accModalIssuer" placeholder="例如: GitHub / Google / Binance" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="accModalSecret">2FA 密钥 (Secret) 或 otpauth:// 链接 *</label>
+          <input type="text" class="form-input" id="accModalSecret" placeholder="例如: JBSWY3DPEHPK3PXP" required />
+        </div>
+
+        <div style="display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.5rem;">
+          <button type="button" class="btn btn-outline" id="cancelModalBtn">取消</button>
+          <button type="submit" class="btn btn-primary" id="saveAccountBtn">保存到云端账号库</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-container">
+      <div>
+        <strong>2fa.cash</strong> · 在线 2FA 二步验证与账号管理工具
+      </div>
+      <div class="footer-links">
+        <a href="https://github.com" target="_blank" class="footer-link">GitHub 开源</a>
+        <a href="javascript:void(0)" id="helpModalLink" class="footer-link">使用指南</a>
+        <a href="javascript:void(0)" id="privacyLink" class="footer-link">隐私说明</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

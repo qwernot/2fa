@@ -1,0 +1,24 @@
+{
+  "name": "2fa-cash-cf",
+  "version": "1.0.0",
+  "description": "现代化极简在线 2FA / TOTP 二步验证工具（融合 2fa.cash 极简交互 + wuzf/2fa 账号系统与 Cloudflare Workers 全球云端部署）",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "serve": "node server.js",
+    "test": "node test.js && node test_api.js",
+    "build:worker": "node build-worker.js",
+    "deploy": "node build-worker.js && wrangler deploy"
+  },
+  "keywords": [
+    "2fa",
+    "totp",
+    "authenticator",
+    "cloudflare-workers",
+    "kv-storage",
+    "two-factor-authentication",
+    "privacy-first"
+  ],
+  "author": "",
+  "license": "MIT"
+}
