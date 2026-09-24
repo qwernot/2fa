@@ -1,9 +1,9 @@
-name = "cosmo-2fa"
+name = "2fa"
 main = "worker.js"
 compatibility_date = "2024-01-13"
 workers_dev = true
 
-# Cloudflare KV 存储（用于多设备云端账号同步，部署时填入真实的 id）
-# [[kv_namespaces]]
-# binding = "SECRETS_KV"
-# id = "your-kv-namespace-id"
+# Cloudflare KV 存储（用于多设备云端账号同步）
+[[kv_namespaces]]
+binding = "SECRETS_KV"
+id = "e97724595738418eabee9615b7e98ad0"
