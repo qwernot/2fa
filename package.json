@@ -1,7 +1,7 @@
 {
-  "name": "2fa-cash-cf",
+  "name": "cosmo-2fa",
   "version": "1.0.0",
-  "description": "现代化极简在线 2FA / TOTP 二步验证工具（融合 2fa.cash 极简交互 + wuzf/2fa 账号系统与 Cloudflare Workers 全球云端部署）",
+  "description": "Cosmo 2FA - 现代化极简在线二步验证工具，支持跨设备云端安全同步与 Cloudflare Workers 一键部署",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -11,14 +11,14 @@
     "deploy": "node build-worker.js && wrangler deploy"
   },
   "keywords": [
+    "cosmo-2fa",
     "2fa",
     "totp",
     "authenticator",
     "cloudflare-workers",
     "kv-storage",
-    "two-factor-authentication",
     "privacy-first"
   ],
-  "author": "",
+  "author": "qwernot",
   "license": "MIT"
 }

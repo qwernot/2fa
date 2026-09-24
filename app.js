@@ -1,6 +1,6 @@
 /**
- * 2FA.cash - 现代化在线 2FA / TOTP 二步验证与账号管理工具
- * 融合 2fa.cash 极简交互 + wuzf/2fa 账号系统与多格式导入导出
+ * Cosmo 2FA - 现代化在线 2FA / TOTP 二步验证与账号管理工具
+ * 融合 Cosmo 2FA 极简交互 + wuzf/2fa 账号系统与多格式导入导出
  */
 
 (() => {
@@ -118,7 +118,7 @@
   // ==========================================
 
   let currentUser = null;
-  let authToken = localStorage.getItem('2fa_cash_token') || null;
+  let authToken = localStorage.getItem('Cosmo 2FA_token') || null;
 
   let currentQuickConfig = null;
   let quickTimer = null;
@@ -321,7 +321,7 @@
     } catch (err) {
       console.warn('Session expired or invalid:', err);
       authToken = null;
-      localStorage.removeItem('2fa_cash_token');
+      localStorage.removeItem('Cosmo 2FA_token');
       currentUser = null;
       updateAuthUI();
     }
@@ -375,7 +375,7 @@
 
       currentUser = data.user;
       authToken = data.token;
-      localStorage.setItem('2fa_cash_token', authToken);
+      localStorage.setItem('Cosmo 2FA_token', authToken);
 
       closeAuthModal();
       updateAuthUI();
@@ -396,7 +396,7 @@
         await apiFetch('/api/logout', { method: 'POST' });
       } catch (e) {}
       authToken = null;
-      localStorage.removeItem('2fa_cash_token');
+      localStorage.removeItem('Cosmo 2FA_token');
       currentUser = null;
       savedAccounts = [];
       updateAuthUI();
@@ -406,7 +406,7 @@
 
   // 主题
   function initTheme() {
-    const savedTheme = localStorage.getItem('2fa_cash_theme');
+    const savedTheme = localStorage.getItem('Cosmo 2FA_theme');
     const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
     const theme = savedTheme || (prefersDark ? 'dark' : 'light');
     setTheme(theme);
@@ -415,10 +415,10 @@
   function setTheme(theme) {
     if (theme === 'dark') {
       document.documentElement.setAttribute('data-theme', 'dark');
-      localStorage.setItem('2fa_cash_theme', 'dark');
+      localStorage.setItem('Cosmo 2FA_theme', 'dark');
     } else {
       document.documentElement.removeAttribute('data-theme');
-      localStorage.setItem('2fa_cash_theme', 'light');
+      localStorage.setItem('Cosmo 2FA_theme', 'light');
     }
   }
 
@@ -1188,7 +1188,7 @@
   });
 
   document.getElementById('helpModalLink').addEventListener('click', () => {
-    alert('【2FA 工具使用说明】\n\n1. 登录云端保存：点击右上角「登录 / 注册」，注册专属账号后，在「我的 2FA」中添加的账号将永久安全保存在云端数据库，换电脑换手机登录即刻同步！\n2. 快捷取码：免登录临时即开即用，输入密钥或按 Ctrl+V 粘贴二维码图片即可秒出验证码。\n3. 下一轮预告：实时展示下轮验证码，避免倒计时临期输入失效。\n4. 公开 URL 取码：可通过 http://localhost:3000/otp/你的密钥 随时在浏览器中查看验证码。');
+    alert('【Cosmo 2FA 使用说明】\n\n1. 登录云端保存：点击右上角「登录 / 注册」，注册专属账号后，在「我的 2FA」中添加的账号将永久安全保存在云端数据库，换电脑换手机登录即刻同步！\n2. 快捷取码：免登录临时即开即用，输入密钥或按 Ctrl+V 粘贴二维码图片即可秒出验证码。\n3. 下一轮预告：实时展示下轮验证码，避免倒计时临期输入失效。\n4. 公开 URL 取码：可通过 http://localhost:3000/otp/你的密钥 随时在浏览器中查看验证码。');
   });
 
   document.getElementById('privacyLink').addEventListener('click', () => {

@@ -6,9 +6,9 @@ const css = fs.readFileSync(path.join(__dirname, 'style.css'), 'utf8');
 const js = fs.readFileSync(path.join(__dirname, 'app.js'), 'utf8');
 
 const workerCode = `/**
- * 2FA 聚合版 - Cloudflare Worker 独立部署单文件
- * 融合 2fa.cash 极致现代 UI + wuzf/2fa 账号系统与 Cloudflare KV 云端同步
- * 
+ * Cosmo 2FA - Cloudflare Worker 独立部署单文件
+ * 支持免登录即开即用、账号登录云端同步、跨设备访问与公开 OTP URL
+ *
  * 部署方式：
  * 1. 在 Cloudflare Workers 后台创建 Worker，复制本文件全部代码粘贴保存
  * 2. 绑定 KV 命名空间: SECRETS_KV
@@ -124,7 +124,6 @@ function sendJSON(data, status = 200) {
   });
 }
 
-// 内存 Mock KV 缓存（防止用户忘记绑定 KV 时直接报错崩溃）
 const memoryKV = new Map();
 function getKV(env) {
   if (env && env.SECRETS_KV) {
@@ -145,7 +144,6 @@ function getKV(env) {
   };
 }
 
-// 提取当前用户
 async function getAuthUser(request, kv) {
   const authHeader = request.headers.get('Authorization') || '';
   if (authHeader.startsWith('Bearer ')) {
@@ -175,9 +173,7 @@ export default {
     const pathname = url.pathname;
     const kv = getKV(env);
 
-    // ==========================================
-    // 公开 OTP 路由 (/otp/:secret)
-    // ==========================================
+    // 公开 OTP 路由
     if (pathname.startsWith('/otp/')) {
       const secret = pathname.replace('/otp/', '').trim();
       const period = parseInt(url.searchParams.get('period') || '30', 10);
@@ -202,7 +198,7 @@ export default {
           <head>
             <meta charset="utf-8">
             <meta name="viewport" content="width=device-width, initial-scale=1">
-            <title>2FA OTP 实时验证码 - \${code}</title>
+            <title>Cosmo 2FA - \${code}</title>
             <style>
               body { font-family: -apple-system, system-ui, sans-serif; background: #09090b; color: #f4f4f5; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
               .card { background: #121215; border: 1px solid #27272a; padding: 2.5rem; border-radius: 16px; text-align: center; max-width: 360px; width: 90%; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
@@ -214,7 +210,7 @@ export default {
           </head>
           <body>
             <div class="card">
-              <span class="badge">Cloudflare Workers 实时验证码</span>
+              <span class="badge">Cosmo 2FA 实时验证码</span>
               <div class="code" onclick="navigator.clipboard.writeText('\${code}'); alert('已复制验证码: \${code}')">\${code.slice(0, 3)} \${code.slice(3)}</div>
               <div class="timer">剩余 \${remaining} 秒</div>
               <div class="next">下一轮验证码：<strong>\${nextCode}</strong></div>
@@ -229,12 +225,9 @@ export default {
       }
     }
 
-    // ==========================================
-    // API 路由 (Cloudflare KV 持久化)
-    // ==========================================
+    // API 路由
     if (pathname.startsWith('/api/')) {
       try {
-        // 1. 注册
         if (pathname === '/api/register' && request.method === 'POST') {
           const { username, password } = await request.json().catch(() => ({}));
           if (!username || username.trim().length < 3) {
@@ -265,7 +258,6 @@ export default {
           return sendJSON({ user: { id: user.id, username: user.username }, token, message: '注册成功' });
         }
 
-        // 2. 登录
         if (pathname === '/api/login' && request.method === 'POST') {
           const { username, password } = await request.json().catch(() => ({}));
           if (!username || !password) {
@@ -291,14 +283,12 @@ export default {
           return sendJSON({ user: { id: user.id, username: user.username }, token, message: '登录成功' });
         }
 
-        // 3. 用户信息
         if (pathname === '/api/me' && request.method === 'GET') {
           const user = await getAuthUser(request, kv);
           if (!user) return sendJSON({ error: '未登录或登录已过期' }, 401);
           return sendJSON({ user });
         }
 
-        // 4. 退出登录
         if (pathname === '/api/logout' && request.method === 'POST') {
           const authHeader = request.headers.get('Authorization') || '';
           if (authHeader.startsWith('Bearer ')) {
@@ -308,19 +298,16 @@ export default {
           return sendJSON({ message: '已退出登录' });
         }
 
-        // 登录拦截
         const user = await getAuthUser(request, kv);
         if (!user) {
           return sendJSON({ error: '请先登录以访问您的 2FA 账号库' }, 401);
         }
 
-        // 5. 获取账号列表
         if (pathname === '/api/accounts' && request.method === 'GET') {
           const list = (await kv.get(\`accounts:\${user.id}\`, 'json')) || [];
           return sendJSON({ accounts: list });
         }
 
-        // 6. 添加账号
         if (pathname === '/api/accounts' && request.method === 'POST') {
           const data = await request.json().catch(() => ({}));
           if (!data.name || !data.secret) {
@@ -344,7 +331,6 @@ export default {
           return sendJSON({ account: newAcc, message: '添加成功' });
         }
 
-        // 7. 批量导入
         if (pathname === '/api/accounts/batch-import' && request.method === 'POST') {
           const { accounts } = await request.json().catch(() => ({}));
           if (!Array.isArray(accounts)) {
@@ -372,7 +358,6 @@ export default {
           return sendJSON({ count, message: \`成功导入 \${count} 个账号\` });
         }
 
-        // 8. 更新账号
         if (pathname.startsWith('/api/accounts/') && request.method === 'PUT') {
           const accountId = pathname.replace('/api/accounts/', '').trim();
           const data = await request.json().catch(() => ({}));
@@ -389,7 +374,6 @@ export default {
           return sendJSON({ account: target, message: '更新成功' });
         }
 
-        // 9. 删除账号
         if (pathname.startsWith('/api/accounts/') && request.method === 'DELETE') {
           const accountId = pathname.replace('/api/accounts/', '').trim();
           let list = (await kv.get(\`accounts:\${user.id}\`, 'json')) || [];
@@ -407,9 +391,7 @@ export default {
       }
     }
 
-    // ==========================================
-    // 静态资源响应 (单 Worker 独立提供全站)
-    // ==========================================
+    // 静态资源响应
     if (pathname === '/style.css') {
       return new Response(CSS_CONTENT, {
         headers: { 'Content-Type': 'text/css; charset=utf-8', 'Cache-Control': 'public, max-age=3600' }
@@ -422,7 +404,6 @@ export default {
       });
     }
 
-    // 默认返回 HTML (支持 SPA)
     return new Response(HTML_CONTENT, {
       headers: { 'Content-Type': 'text/html; charset=utf-8' }
     });
@@ -431,4 +412,4 @@ export default {
 `;
 
 fs.writeFileSync(path.join(__dirname, 'worker.js'), workerCode, 'utf8');
-console.log('✅ 成功构建 Cloudflare Worker 单文件独立脚本: worker.js (' + Math.round(workerCode.length / 1024) + ' KB)');
+console.log('✅ 成功构建 Cosmo 2FA Cloudflare Worker 单文件独立脚本: worker.js (' + Math.round(workerCode.length / 1024) + ' KB)');

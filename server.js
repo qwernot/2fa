@@ -151,7 +151,7 @@ const server = http.createServer(async (req, res) => {
         <head>
           <meta charset="utf-8">
           <meta name="viewport" content="width=device-width, initial-scale=1">
-          <title>2FA OTP 实时验证码 - ${code}</title>
+          <title>Cosmo 2FA 实时验证码 - ${code}</title>
           <style>
             body { font-family: -apple-system, system-ui, sans-serif; background: #09090b; color: #f4f4f5; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
             .card { background: #121215; border: 1px solid #27272a; padding: 2.5rem; border-radius: 16px; text-align: center; max-width: 360px; width: 90%; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
@@ -336,7 +336,7 @@ const server = http.createServer(async (req, res) => {
 function startServer(port) {
   server.listen(port, HOST, () => {
     console.log('\n========================================');
-    console.log('  🚀 2FA 服务已就绪！(支持登录保存 + 公开 OTP 路由)');
+    console.log('  🚀 Cosmo 2FA 服务已就绪！(支持登录保存 + 公开 OTP 路由)');
     console.log(`  ➜ 本地访问:   http://localhost:${port}/`);
     console.log(`  ➜ 局域网访问: http://127.0.0.1:${port}/`);
     console.log('  🔒 提示: 纯前端计算 + 服务端安全用户隔离');
