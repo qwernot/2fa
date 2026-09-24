@@ -1187,11 +1187,11 @@
     reader.readAsText(file);
   });
 
-  document.getElementById('helpModalLink').addEventListener('click', () => {
-    alert('【Cosmo 2FA 使用说明】\n\n1. 登录云端保存：点击右上角「登录 / 注册」，注册专属账号后，在「我的 2FA」中添加的账号将永久安全保存在云端数据库，换电脑换手机登录即刻同步！\n2. 快捷取码：免登录临时即开即用，输入密钥或按 Ctrl+V 粘贴二维码图片即可秒出验证码。\n3. 下一轮预告：实时展示下轮验证码，避免倒计时临期输入失效。\n4. 公开 URL 取码：可通过 http://localhost:3000/otp/你的密钥 随时在浏览器中查看验证码。');
+  document.getElementById('helpModalLink')?.addEventListener('click', () => {
+    alert('【Cosmo 2FA 使用说明】\n\n1. 登录云端保存：点击右上角「登录 / 注册」，注册专属账号后，在「我的 2FA」中添加的账号将永久安全保存在云端数据库，换电脑换手机登录即刻同步！\n2. 快捷取码：免登录临时即开即用，输入密钥或按 Ctrl+V 粘贴二维码图片即可秒出验证码。\n3. 下一轮预告：实时展示下轮验证码，避免倒计时临期输入失效。\n4. 公开 URL 取码：可通过 /otp/你的密钥 随时在浏览器中查看验证码。');
   });
 
-  document.getElementById('privacyLink').addEventListener('click', () => {
+  document.getElementById('privacyLink')?.addEventListener('click', () => {
     alert('【安全与隐私保障】\n\n1. 密码安全：用户密码采用业界标准的 PBKDF2-SHA512 + 随机盐哈希加密存储。\n2. 多用户隔离：每个用户只能访问和管理属于自己的 2FA 账号列表。\n3. 本地计算：TOTP 验证码在您的浏览器本地毫秒级生成。');
   });
 

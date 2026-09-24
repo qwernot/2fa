@@ -1196,24 +1196,8 @@ footer {
   margin: 0 auto;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-}
-
-.footer-links {
-  display: flex;
-  gap: 1rem;
-}
-
-.footer-link {
-  color: var(--text-muted);
-  text-decoration: none;
-}
-
-.footer-link:hover {
-  text-decoration: underline;
-  color: var(--text-main);
+  justify-content: center;
+  text-align: center;
 }
 
 /* ==========================================
@@ -1371,13 +1355,7 @@ footer {
   }
 
   .footer-container {
-    flex-direction: column;
     text-align: center;
-    gap: 0.65rem;
-  }
-
-  .footer-links {
-    justify-content: center;
   }
 
   .hide-on-mobile {
