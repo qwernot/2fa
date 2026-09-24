@@ -12,26 +12,75 @@
   <!-- Header -->
   <header>
     <div class="header-container">
-      <a href="#" class="brand-logo" id="brandLink">
-        <div class="brand-logo-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"></path>
-            <circle cx="16.5" cy="7.5" r=".5" fill="currentColor"></circle>
-          </svg>
-        </div>
-        <span>Cosmo <span class="brand-muted">2FA</span></span>
-      </a>
+      <div class="header-main-row">
+        <a href="#" class="brand-logo" id="brandLink">
+          <div class="brand-logo-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"></path>
+              <circle cx="16.5" cy="7.5" r=".5" fill="currentColor"></circle>
+            </svg>
+          </div>
+          <span>Cosmo <span class="brand-muted">2FA</span></span>
+        </a>
 
-      <div class="nav-tabs">
+        <!-- 右侧用户操作与主题切换 -->
+        <div class="header-actions">
+          <div id="userNavArea" class="user-nav-wrap">
+            <!-- 未登录状态 -->
+            <button class="btn btn-outline btn-sm" id="headerLoginBtn" type="button">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                <polyline points="10 17 15 12 10 7"></polyline>
+                <line x1="15" y1="12" x2="3" y2="12"></line>
+              </svg>
+              <span>登录 / 注册</span>
+            </button>
+
+            <!-- 已登录状态 -->
+            <div id="loggedInGroup" style="display: none; align-items: center; gap: 0.4rem;">
+              <div class="user-badge" id="userBadge" title="当前登录用户">
+                <span class="user-avatar-tiny" id="userAvatarChar">U</span>
+                <span class="user-name-text" id="headerUsername">User</span>
+              </div>
+              <button class="btn btn-outline btn-sm btn-icon-sm" id="logoutBtn" type="button" title="退出登录">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                  <polyline points="16 17 21 12 16 7"></polyline>
+                  <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                <span class="hide-on-mobile">退出</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 主题切换 -->
+          <button class="theme-btn" id="themeToggleBtn" title="切换深色/浅色模式">
+            <svg id="themeIcon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="4"></circle>
+              <path d="M12 2v2"></path>
+              <path d="M12 20v2"></path>
+              <path d="m4.93 4.93 1.41 1.41"></path>
+              <path d="m17.66 17.66 1.41 1.41"></path>
+              <path d="M2 12h2"></path>
+              <path d="M20 12h2"></path>
+              <path d="m6.34 17.66-1.41 1.41"></path>
+              <path d="m19.07 4.93-1.41 1.41"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- 导航切换 Tabs (桌面端居中显示，手机端全宽分段胶囊) -->
+      <nav class="nav-tabs" aria-label="主功能切换">
         <button class="nav-btn active" id="tabQuickBtn" data-target="quick">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
           </svg>
           <span>快捷取码</span>
         </button>
 
         <button class="nav-btn" id="tabBatchBtn" data-target="batch">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect width="18" height="18" x="3" y="3" rx="2"></rect>
             <path d="M3 9h18"></path>
             <path d="M3 15h18"></path>
@@ -41,58 +90,14 @@
         </button>
 
         <button class="nav-btn" id="tabMy2faBtn" data-target="my2fa">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="16" r="1"></circle>
             <rect x="3" y="10" width="18" height="12" rx="2"></rect>
             <path d="M7 10V7a5 5 0 0 1 10 0v3"></path>
           </svg>
           <span>我的 2FA</span>
         </button>
-
-        <!-- 用户登录状态栏 -->
-        <div id="userNavArea" style="display: flex; align-items: center; gap: 0.5rem;">
-          <!-- 未登录状态 -->
-          <button class="btn btn-outline btn-sm" id="headerLoginBtn" type="button">
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
-              <polyline points="10 17 15 12 10 7"></polyline>
-              <line x1="15" y1="12" x2="3" y2="12"></line>
-            </svg>
-            <span>登录 / 注册</span>
-          </button>
-
-          <!-- 已登录状态 -->
-          <div id="loggedInGroup" style="display: none; align-items: center; gap: 0.5rem;">
-            <div class="user-badge" id="userBadge" title="当前登录用户">
-              <span class="user-avatar-tiny" id="userAvatarChar">U</span>
-              <span class="user-name-text" id="headerUsername">User</span>
-            </div>
-            <button class="btn btn-outline btn-sm" id="logoutBtn" type="button" title="退出登录">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                <polyline points="16 17 21 12 16 7"></polyline>
-                <line x1="21" y1="12" x2="9" y2="12"></line>
-              </svg>
-              <span>退出</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- 主题切换 -->
-        <button class="theme-btn" id="themeToggleBtn" title="切换深色/浅色模式">
-          <svg id="themeIcon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="4"></circle>
-            <path d="M12 2v2"></path>
-            <path d="M12 20v2"></path>
-            <path d="m4.93 4.93 1.41 1.41"></path>
-            <path d="m17.66 17.66 1.41 1.41"></path>
-            <path d="M2 12h2"></path>
-            <path d="M20 12h2"></path>
-            <path d="m6.34 17.66-1.41 1.41"></path>
-            <path d="m19.07 4.93-1.41 1.41"></path>
-          </svg>
-        </button>
-      </div>
+      </nav>
     </div>
   </header>
 
@@ -212,8 +217,8 @@
                 <span>导入二维码</span>
               </button>
             </div>
-            <span style="font-size: 0.78rem; color: var(--text-muted);">
-              💡 提示：按 Ctrl+V 可直接粘贴二维码截图
+            <span class="action-hint-text">
+              💡 提示：支持导入图片或直接粘贴二维码截图
             </span>
           </div>
         </div>
