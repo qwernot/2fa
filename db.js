@@ -2,8 +2,12 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 
-const DB_FILE = path.join(__dirname, 'data', 'db.json');
-const TMP_FILE = path.join(__dirname, 'data', 'db.tmp.json');
+const DATA_DIR = path.join(__dirname, 'data');
+if (!fs.existsSync(DATA_DIR)) {
+  fs.mkdirSync(DATA_DIR, { recursive: true });
+}
+const DB_FILE = path.join(DATA_DIR, 'db.json');
+const TMP_FILE = path.join(DATA_DIR, 'db.tmp.json');
 
 const defaultData = {
   users: [],       // [{ id, username, passwordHash, salt, createdAt }]

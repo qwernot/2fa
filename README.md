@@ -73,12 +73,23 @@ npm start
 ```
 访问：`http://localhost:3000`（数据保存在本地 `data/db.json`，同样支持多用户注册登录与数据隔离）。
 
-### 2. Docker 一键运行
+### 2. Docker 一键运行 (多架构支持 amd64 / arm64)
+
+镜像已推送至 Docker Hub，支持 x86_64 及 ARM64（苹果 Mac M系列/树莓派/ARM云服务器等）：
+
 ```bash
-cd /home/dark/2fa
+# 方式一：直接运行 Docker 镜像
+docker run -d \
+  --name cosmo-2fa \
+  --restart unless-stopped \
+  -p 3000:3000 \
+  -v $(pwd)/data:/app/data \
+  darkver8/cosmo-2fa:latest
+
+# 方式二：使用 docker-compose 一键启动
 docker-compose up -d
 ```
-访问：`http://your-server-ip:8080`
+访问：`http://your-server-ip:3000` (数据将自动持久化保存在挂载的 `./data` 目录中)。
 
 ---
 

@@ -1,9 +1,14 @@
 version: '3.8'
 
 services:
-  2fa-tool:
-    build: .
-    container_name: 2fa-cash-app
-    restart: always
+  cosmo-2fa:
+    image: darkver8/cosmo-2fa:latest
+    container_name: cosmo-2fa
+    restart: unless-stopped
     ports:
-      - "8080:80"
+      - "3000:3000"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - PORT=3000
+      - HOST=0.0.0.0
