@@ -4,3 +4,6 @@ data/db.tmp.json
 *.log
 .DS_Store
 node_modules/
+private.*.key
+*.key
+miniprogram/

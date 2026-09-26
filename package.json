@@ -8,7 +8,9 @@
     "serve": "node server.js",
     "test": "node test.js && node test_api.js",
     "build:worker": "node build-worker.js",
-    "deploy": "node build-worker.js && wrangler deploy"
+    "deploy": "node build-worker.js && wrangler deploy",
+    "mp:upload": "node scripts/mp-ci.js upload",
+    "mp:preview": "node scripts/mp-ci.js preview"
   },
   "keywords": [
     "cosmo-2fa",
@@ -20,5 +22,8 @@
     "privacy-first"
   ],
   "author": "qwernot",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "miniprogram-ci": "^2.1.31"
+  }
 }
